@@ -1,0 +1,30 @@
+name: PocketMates Daily AI Agency
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # എല്ലാ ദിവസവും രാവിലെ 8:30 AM IST-ന് തനിയെ റൺ ആകും
+  workflow_dispatch: # നിനക്ക് എപ്പോൾ വേണമെങ്കിലും മാന്വൽ ആയി റൺ ചെയ്യാൻ
+
+jobs:
+  run-agency:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install google-generativeai playwright requests
+          playwright install --with-deps chromium
+
+      - name: Run AI Marketing & Design Agents
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python agency.py
